@@ -15,7 +15,8 @@ const poolConfig = {
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  connectTimeout: 30000
+  connectTimeout: 30000,
+  family: 4
 };
 
 if (process.env.DB_HOST && process.env.DB_HOST !== 'localhost') {
