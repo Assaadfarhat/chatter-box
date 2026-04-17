@@ -136,14 +136,12 @@ async function initDB() {
     console.log('All database tables ready');
   } catch (err) {
     console.error('Database initialization error:', err.message);
-    process.exit(1);
   }
 }
 
 const PORT = process.env.PORT || 5000;
 
-initDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  initDB();
 });
