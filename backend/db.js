@@ -1,9 +1,12 @@
 const mysql = require('mysql2');
 require('dotenv').config();
 
-const isProduction = process.env.DB_HOST && process.env.DB_HOST !== 'localhost';
+console.log('DB_HOST:', process.env.DB_HOST);
+console.log('DB_PORT:', process.env.DB_PORT);
+console.log('DB_USER:', process.env.DB_USER);
+console.log('DB_NAME:', process.env.DB_NAME);
 
-const pool = mysql.createPool({
+const poolConfig = {
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '3306'),
   user: process.env.DB_USER || 'root',
@@ -12,14 +15,21 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  ...(isProduction && { ssl: { rejectUnauthorized: false } })
-});
+  connectTimeout: 30000
+};
+
+if (process.env.DB_HOST && process.env.DB_HOST !== 'localhost') {
+  poolConfig.ssl = { rejectUnauthorized: false };
+  console.log('SSL enabled for production DB');
+}
+
+const pool = mysql.createPool(poolConfig);
 
 pool.getConnection((err, connection) => {
   if (err) {
     console.error('Database connection failed:', err.message);
   } else {
-    console.log('Connected to MySQL database');
+    console.log('Connected to MySQL database successfully');
     connection.release();
   }
 });
