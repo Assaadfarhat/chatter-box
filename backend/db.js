@@ -1,6 +1,8 @@
 const mysql = require('mysql2');
 require('dotenv').config();
 
+const isProduction = process.env.DB_HOST && process.env.DB_HOST !== 'localhost';
+
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '3306'),
@@ -9,7 +11,8 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'chatterbox',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  ...(isProduction && { ssl: { rejectUnauthorized: false } })
 });
 
 pool.getConnection((err, connection) => {
